@@ -107,3 +107,54 @@ v_core_timers
 ### Run / Executed
 
     v_timer.on('run', async () => console.log('started'));
+
+## 📏 Helper **vTime**
+
+Get milliseconds from...
+
+    const { vTime } = require('v_core_timers');
+
+### Seconds
+
+    vTime.seconds(value); //> (value * 1000);
+
+### Minutes
+
+    vTime.minutes(value); //> vTime.seconds(value * 60);
+
+### Hours
+
+    vTime.hours(value); //> vTime.minutes(value * 60);
+
+### Days
+
+    vTime.days(value); //> vTime.hours(value * 24);
+
+### Weeks
+
+    vTime.weeks(value); //> vTime.days(value * 7); 
+
+### Months
+
+    vTime.months(value); //> vTime.days(value * 30); 
+
+### Years
+
+    vTime.years(value); //> vTime.days(value * 365); 
+
+> NOTE: *value* is 1 by default.
+
+### SAMPLE vTime Usage
+
+Just a basic logging to console.
+
+    const { vTime } = require('v_core_timers');
+    (async () => {
+      console.log(await vTime.seconds(2)); //> 2000
+      console.log(await vTime.minutes(2)); //> 12000
+      console.log(await vTime.hours(2)); //> 7200000
+      console.log(await vTime.days(2)); //> 172800000 
+      console.log(await vTime.weeks(2)); //> 1209600000
+      console.log(await vTime.months(2)); //> 2592000000
+      console.log(await vTime.years(2)); //> 63072000000
+    })();
