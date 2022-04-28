@@ -7,13 +7,16 @@ module.exports = class V_Core_Timer extends EventEmitter {
 
     super(props);
 
+    if (typeof props.cb !== 'function') {
+      throw new Error("Core Timer is Missing a Callback Function");
+    }
+
     let loop = null;
 
     let autoStart = (typeof props.autoStart === 'boolean') ? props.autoStart : true;
 
-    this.interval = (!isNaN(props.interval) && props.interval > 0) ? props.interval : 100;
-    this.cb = (typeof props.cb === 'function') ? props.cb : () => console.warn("missing callback");
-
+    let interval = (!isNaN(props.interval) && props.interval > 0) ? props.interval : 100;
+    let cb = props.cb;
 
     //* Begin/Start It
     this.begin = async () => {
@@ -21,7 +24,7 @@ module.exports = class V_Core_Timer extends EventEmitter {
       if (loop === null) {
         loop = setInterval(async () => {
           this.run();
-        }, this.interval);
+        }, interval);
         result = true;
       }
       this.emit('start', result);
@@ -31,10 +34,9 @@ module.exports = class V_Core_Timer extends EventEmitter {
 
     //* End/Stop it
     this.end = async () => {
-      if (loop !== null) {
-        clearInterval(loop);
-        loop = null;
-      }
+      if (loop === null) return false;
+      clearInterval(loop);
+      loop = null;
       let result = (loop === null);
       this.emit('end', result);
       return result;
@@ -46,12 +48,12 @@ module.exports = class V_Core_Timer extends EventEmitter {
 
 
     //* Change Interval
-    this.setInterval = async (val = this.interval) => {
-      if (isNaN(val) || val <= 0) return false;
+    this.setInterval = async (val = null) => {
+      if (isNaN(val) || val <= 0 || val === null) return false;
 
-      this.interval = val;
+      interval = val;
 
-      if (await this.isRunning()) {
+      if (await this.status()) {
         this.end();
         this.begin();
       }
@@ -62,12 +64,19 @@ module.exports = class V_Core_Timer extends EventEmitter {
 
     //? HELPERS:
     //* Getting Interval
-    this.getInterval = async () => this.interval;
+    this.getInterval = async () => interval;
 
     this.run = async () => {
-      this.cb();
-      this.emit('run');
+      try {
+        cb();
+        this.emit('run');
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
     };
+
 
     //? ALIASES:
     //* this.end()
@@ -80,7 +89,6 @@ module.exports = class V_Core_Timer extends EventEmitter {
     this.changeInterval = async (val) => await this.setInterval(val);
     //* this.run()
     this.execute = async () => await this.run();
-
 
     //! AutoStart if not disabled
     if (autoStart) this.start();
