@@ -9,15 +9,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/V-core9/v_core_timers.git"
+    "url": "git+https://github.com/v-core9/v_core_timers.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "v-core9",
+    "interval",
+    "timers",
+    "setInterval"
+  ],
+  "author": {
+    "name": "Slavko Vuletic",
+    "url": "https://github.com/v-core9"
+  },
   "license": "The Unlicense",
   "bugs": {
-    "url": "https://github.com/V-core9/v_core_timers/issues"
+    "url": "https://github.com/v-core9/v_core_timers/issues"
   },
-  "homepage": "https://github.com/V-core9/v_core_timers#readme",
+  "homepage": "https://github.com/v-core9/v_core_timers#readme",
   "devDependencies": {
     "jest": "^28.0.2"
   }
