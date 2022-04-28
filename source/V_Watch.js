@@ -22,7 +22,7 @@ module.exports = class V_Watch extends EventEmitter {
     this.new = async (name, interval, cb, autoStart = true) => {
       let task = new V_Core_Timer({ interval, cb, autoStart });
       tasksList[name] = task;
-      this.emit('new', task);
+      this.emit('new', name);
       return true;
     };
 
@@ -50,7 +50,7 @@ module.exports = class V_Watch extends EventEmitter {
       try {
         let task = await this.get(key);
         await task.end();
-        this.emit('stop', task);
+        this.emit('stop', key);
         return true;
       } catch (err) {
         console.warn(err);
@@ -63,7 +63,7 @@ module.exports = class V_Watch extends EventEmitter {
       try {
         let task = await this.get(key);
         await task.start();
-        this.emit('start', task);
+        this.emit('start', key);
         return true;
       } catch (err) {
         console.warn(err);
@@ -75,7 +75,7 @@ module.exports = class V_Watch extends EventEmitter {
       try {
         let task = await this.get(key);
         await task.run();
-        this.emit('run', task);
+        this.emit('run', key);
         return true;
       } catch (err) {
         console.warn(err);

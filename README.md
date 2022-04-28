@@ -30,6 +30,28 @@ v_core_timers
 
     v_watch.end();
 
+## 🎪 Events
+
+### New / Created a timer
+
+    v_watch.on('new', async (key) => console.log('New timer: '+ key));
+
+### Delete / Removed a timer
+
+    v_watch.on('delete', async (key) => console.log('deleted timer: '+ key));
+
+### End / Stopped all timers
+
+    v_watch.on('end', async () => console.log('Ended All Timers'));
+
+### Timer Started
+
+    v_watch.on('start', async (key) => console.log('Started Timer: '+ key));
+
+### Timer Stopped
+
+    v_watch.on('stop', async (key) => console.log('Ended Timer: '+ key));
+
 #
 
 ## 🥒 Inner Timer Object Manual Usage
@@ -72,3 +94,16 @@ v_core_timers
 
 > *Alias:* .**execute()**
 
+## 🎪 Events
+
+### Begin / Start
+
+    v_timer.on('begin', async () => console.log('started'));
+
+### End / Stop
+
+    v_timer.on('end', async () => console.log('started'));
+
+### Run / Executed
+
+    v_timer.on('run', async () => console.log('started'));

@@ -4,7 +4,8 @@
   "description": "v_core_timers",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prepack": "npm run test"
   },
   "repository": {
     "type": "git",
