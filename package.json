@@ -1,0 +1,23 @@
+{
+  "name": "v_core_timers",
+  "version": "1.0.0",
+  "description": "v_core_timers",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V-core9/v_core_timers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "The Unlicense",
+  "bugs": {
+    "url": "https://github.com/V-core9/v_core_timers/issues"
+  },
+  "homepage": "https://github.com/V-core9/v_core_timers#readme",
+  "devDependencies": {
+    "jest": "^28.0.2"
+  }
+}
