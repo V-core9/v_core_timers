@@ -52,6 +52,9 @@ v_core_timers
 
     v_watch.on('stop', async (key) => console.log('Ended Timer: '+ key));
 
+### Run / Executed
+
+    v_watch.on('run', async (key) => console.log('Run Timer: ' + key));
 #
 
 ## 🥒 Inner Timer Object Manual Usage
@@ -96,21 +99,17 @@ v_core_timers
 
 ## 🎪 Events
 
-### New / Created Timer
-
-    v_timer.on('new', async (key) => console.log('New timer: '+ key));
-
 ### Begin / Start
 
-    v_timer.on('begin', async (key) => console.log('Started: ' + key));
+    v_timer.on('begin', async () => console.log('started'));
 
 ### End / Stop
 
-    v_timer.on('end', async (key) => console.log('Ended: ' + key));
+    v_timer.on('end', async () => console.log('started'));
 
 ### Run / Executed
 
-    v_timer.on('run', async (key) => console.log('Run: ' + key));
+    v_timer.on('run', async () => console.log('started'));
 
 ## 📏 Helper **vTime**
 
