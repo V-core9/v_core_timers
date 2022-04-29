@@ -96,17 +96,21 @@ v_core_timers
 
 ## 🎪 Events
 
+### New / Created Timer
+
+    v_timer.on('new', async (key) => console.log('New timer: '+ key));
+
 ### Begin / Start
 
-    v_timer.on('begin', async () => console.log('started'));
+    v_timer.on('begin', async (key) => console.log('Started: ' + key));
 
 ### End / Stop
 
-    v_timer.on('end', async () => console.log('started'));
+    v_timer.on('end', async (key) => console.log('Ended: ' + key));
 
 ### Run / Executed
 
-    v_timer.on('run', async () => console.log('started'));
+    v_timer.on('run', async (key) => console.log('Run: ' + key));
 
 ## 📏 Helper **vTime**
 

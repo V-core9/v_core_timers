@@ -7,6 +7,9 @@ watch.on('new', (task) => console.log("Created New Task: ", task));
 watch.on('stop', (task) => console.log("Stopped Task: ", task));
 watch.on('end', () => console.log("Here my Watch has Ended."));
 
+let runCounter = 0;
+watch.on('run', (key) => runCounter++);
+
 
 test("base test run", async () => {
 
@@ -42,6 +45,8 @@ test("base test run", async () => {
   expect(counters.test1 * 2).toBe(counters.test3);
   expect(counters.test1).toBeGreaterThan(50);
 
-  //console.log(counters);
+  console.log(counters);
 
+  console.log(runCounter);
+  expect(runCounter).toBe(counters.test1 + counters.test2);
 });

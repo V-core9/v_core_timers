@@ -1,7 +1,7 @@
 {
   "name": "v_core_timers",
-  "version": "0.0.1",
-  "description": "v_core_timers",
+  "version": "0.0.2",
+  "description": "Simple to use Timers with Events for node and web.",
   "main": "index.js",
   "scripts": {
     "test": "jest",

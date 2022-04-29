@@ -23,6 +23,7 @@ module.exports = class V_Watch extends EventEmitter {
       let task = new V_Core_Timer({ interval, cb, autoStart });
       tasksList[name] = task;
       this.emit('new', name);
+      task.on('run', async () => this.emit('run', name));
       return true;
     };
 
