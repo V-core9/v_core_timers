@@ -1,6 +1,6 @@
 # v_core_timers
 
-v_core_timers
+Simple to use Timers with Events for node and web.
 
 ## 📑 How to use
 
@@ -12,23 +12,73 @@ v_core_timers
 
 ### Add a new timer
 
+Create a task/timer by giving it name, interval and a callback function.
+
+    // Simple Task
     v_watch.new('my_timer', 1000, () => console.log('timer is running'));
+
+    // or
+    v_watch.create('my_timer', 1000, () => console.log('timer is running'));
+
+#### Create a disabled/inactive tasks (default is active/enabled)
+
+    v_watch.create('my_timer', 1000, () => console.log('timer is running'), false);
+
+> 🔻 This only adds the timer to the list of timers, it does not start it.
 
 ### Start a timer
 
     v_watch.start('my_timer');
 
+### Has a timer
+
+Check if the timer exists.
+
+    v_watch.has('my_timer');
+
+> 🔻 This will return true even if the timer is not running.
+
+### Is Active Check
+
+Just a passthrough to get the status of it from the timer object.
+
+    v_watch.isActive('my_timer');
+
 ### Stop a timer
+
+Stop a task/timer by name. This will not remove it from tasks list.
 
     v_watch.stop('my_timer');
 
 ### Delete a timer
 
+Delete a timer. Stops it if it is running.
+
     v_watch.delete('my_timer');
 
 ### End all timers
 
+This will stop all tasks[timers] and clear the task list.
+
     v_watch.end();
+
+### Stats
+
+Get some useful information about the timers.
+
+    v_watch.stats();
+
+#### EXAMPLE OUTPUT
+
+    {
+      disabledTasksCount: 1,
+      activeTasksCount: 1,
+      totalTasksCount: 2,
+      tasks: [
+        { name: 'TestTask', active: false, interval: 1 },
+        { name: 'SecondaryTask', active: true, interval: 10 }
+      ]
+    }
 
 ## 🎪 Events
 
@@ -55,6 +105,11 @@ v_core_timers
 ### Run / Executed
 
     v_watch.on('run', async (key) => console.log('Run Timer: ' + key));
+
+### Interval Change
+
+    v_watch.on('intervalChange', async (data) => console.log(data.key + ' interval changed to ' + data.interval));
+
 #
 
 ## 🥒 Inner Timer Object Manual Usage

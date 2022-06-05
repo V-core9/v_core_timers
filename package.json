@@ -1,6 +1,6 @@
 {
   "name": "v_core_timers",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple to use Timers with Events for node and web.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "v-core9",
     "interval",
     "timers",
-    "setInterval"
+    "setInterval",
+    "events",
+    "EventEmitter"
   ],
   "author": {
     "name": "Slavko Vuletic",
