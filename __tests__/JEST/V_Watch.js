@@ -3,8 +3,8 @@ const delayedAction = require('../helpers/delayedAction')
 const { hof_v_watch } = require('../..')
 const watch = hof_v_watch()
 
-watch.on('new', (task) => console.log('Created New Task: ', task))
-watch.on('stop', (task) => console.log('Stopped Task: ', task))
+watch.on('new', (timer) => console.log('Created New Timer: ', timer))
+watch.on('stop', (timer) => console.log('Stopped Timer: ', timer))
 watch.on('end', () => console.log('Here my Watch has Ended.'))
 
 let runCounter = 0
@@ -20,29 +20,29 @@ test('base test run', async () => {
 
   watch.on('intervalChange', () => counters.intChange++)
 
-  await watch.new('TestTask', 1, () => counters.test1++, false)
-  await watch.create('SecondaryTask', 10, () => counters.test2++)
+  await watch.new('TestTimer', 1, () => counters.test1++, false)
+  await watch.create('SecondaryTimer', 10, () => counters.test2++)
 
-  expect(await watch.isActive('TestTask')).toBe(false)
-  expect(await watch.isActive('SecondaryTask')).toBe(true)
+  expect(await watch.isActive('TestTimer')).toBe(false)
+  expect(await watch.isActive('SecondaryTimer')).toBe(true)
 
-  let testTask = await watch.get('TestTask')
+  let testTimer = await watch.get('TestTimer')
 
-  await testTask.on('start', async () => console.log('testTask STARTED'))
-  await testTask.on('run', async () => counters.test3++)
-  await testTask.on('run', async () => counters.test3++)
-  await testTask.on('end', async () => console.log('testTask ENDED'))
+  await testTimer.on('start', async () => console.log('testTimer STARTED'))
+  await testTimer.on('run', async () => counters.test3++)
+  await testTimer.on('run', async () => counters.test3++)
+  await testTimer.on('end', async () => console.log('testTimer ENDED'))
 
-  //console.log(testTask);
+  //console.log(testTimer);
 
   let statsCheck01 = await watch.stats()
   console.log(statsCheck01)
 
-  expect(statsCheck01.activeTasksCount).toBe(1)
-  expect(statsCheck01.disabledTasksCount).toBe(1)
-  expect(statsCheck01.totalTasksCount).toBe(2)
+  expect(statsCheck01.activeTimersCount).toBe(1)
+  expect(statsCheck01.disabledTimersCount).toBe(1)
+  expect(statsCheck01.totalTimersCount).toBe(2)
 
-  await testTask.start()
+  await testTimer.start()
 
   expect(Object.keys(await watch.get()).length).toBe(2)
 
@@ -61,10 +61,10 @@ test('base test run', async () => {
   expect(runCounter).toBe(counters.test1 + counters.test2)
 
   counters.test1 = 0
-  await watch.new('TestTask', 1, () => counters.test1++, false)
-  await watch.run('TestTask')
+  await watch.new('TestTimer', 1, () => counters.test1++, false)
+  await watch.run('TestTimer')
   expect(counters.test1).toBe(1)
 
-  expect(await watch.changeInterval('TestTask', 500)).toBe(true)
+  expect(await watch.changeInterval('TestTimer', 500)).toBe(true)
   expect(counters.intChange).toBe(1)
 })

@@ -2,34 +2,34 @@ import { EventEmitter } from 'events'
 import v_core_timer_hof from './v_core_timer_hof'
 
 /**
- * Creates a watch object for managing tasks.
+ * Creates a watch object for managing timers.
  *
  * @param {Object} props - Optional properties for configuring the watch object.
  * @param {boolean} props.withoutEvents - If true, the watch object will not emit events. Default is false.
- * @returns {Object} - The watch object with various methods for managing tasks.
+ * @returns {Object} - The watch object with various methods for managing timers.
  */
 export default function v_watch(props = {}) {
   const withoutEvents = props?.withoutEvents ? true : false
 
   const coreWatch = !withoutEvents ? new EventEmitter() : {}
-  //? The Actual List of tasks
-  const tasksList = {}
+  //? The Actual List of timers
+  const timerList = {}
 
-  coreWatch.get = async (key) => (key !== undefined ? tasksList[key] : tasksList)
+  coreWatch.get = async (key) => (key !== undefined ? timerList[key] : timerList)
 
-  coreWatch.has = async (key) => tasksList[key] !== undefined
+  coreWatch.has = async (key) => timerList[key] !== undefined
 
-  coreWatch.keys = async () => Object.keys(tasksList)
+  coreWatch.keys = async () => Object.keys(timerList)
 
   coreWatch.count = async () => (await coreWatch.keys()).length
 
-  //? Create New Task
+  //? Create New Timer
   coreWatch.new = async (name, interval, cb, autoStart = true) => {
-    let task = v_core_timer_hof({ interval, cb, autoStart })
-    tasksList[name] = task
+    let timer = v_core_timer_hof({ interval, cb, autoStart })
+    timerList[name] = timer
     if (!withoutEvents) {
       coreWatch.emit('new', name)
-      task.on('run', async () => coreWatch.emit('run', name))
+      timer.on('run', async () => coreWatch.emit('run', name))
     }
     return true
   }
@@ -37,11 +37,11 @@ export default function v_watch(props = {}) {
   //* and alias for new
   coreWatch.create = async (...arg) => await coreWatch.new(...arg)
 
-  //? This deletes a task from list by ending it first
+  //? This deletes a timer from list by ending it first
   coreWatch.delete = async (key) => {
     try {
-      await tasksList[key].end()
-      delete tasksList[key]
+      await timerList[key].end()
+      delete timerList[key]
       if (!withoutEvents) {
         coreWatch.emit('delete', key)
       }
@@ -52,9 +52,9 @@ export default function v_watch(props = {}) {
     }
   }
 
-  //? Ends all tasks
+  //? Ends all timers
   coreWatch.end = async () => {
-    for (let key in tasksList) {
+    for (let key in timerList) {
       coreWatch.delete(key)
     }
     if (!withoutEvents) {
@@ -63,11 +63,11 @@ export default function v_watch(props = {}) {
     return true
   }
 
-  //? Stop a Task
+  //? Stop a Timer
   coreWatch.stop = async (key) => {
     try {
-      let task = await coreWatch.get(key)
-      await task.end()
+      let timer = await coreWatch.get(key)
+      await timer.end()
       if (!withoutEvents) {
         coreWatch.emit('stop', key)
       }
@@ -78,11 +78,11 @@ export default function v_watch(props = {}) {
     }
   }
 
-  //? Start a task from list of tasks.
+  //? Start a timer from list of timers.
   coreWatch.start = async (key) => {
     try {
-      let task = await coreWatch.get(key)
-      await task.start()
+      let timer = await coreWatch.get(key)
+      await timer.start()
       if (!withoutEvents) {
         coreWatch.emit('start', key)
       }
@@ -93,11 +93,11 @@ export default function v_watch(props = {}) {
     }
   }
 
-  //? Manually RUN a task
+  //? Manually RUN a timer
   coreWatch.run = async (key) => {
     try {
-      let task = await coreWatch.get(key)
-      await task.run()
+      let timer = await coreWatch.get(key)
+      await timer.run()
       if (!withoutEvents) {
         coreWatch.emit('run', key)
       }
@@ -108,55 +108,55 @@ export default function v_watch(props = {}) {
     }
   }
 
-  //? Check if a task is active without getting it.
+  //? Check if a timer is active without getting it.
   coreWatch.isActive = async (key) => {
     try {
-      let task = await coreWatch.get(key)
-      return await task.isActive()
+      let timer = await coreWatch.get(key)
+      return await timer.isActive()
     } catch (err) {
       return false
     }
   }
 
-  //? Active/Running tasks count.
+  //? Active/Running timers count.
   coreWatch.countActive = async () => {
     let count = 0
-    for (const task in tasksList) {
-      if (await tasksList[task].isActive()) {
+    for (const timer in timerList) {
+      if (await timerList[timer].isActive()) {
         count++
       }
     }
     return count
   }
 
-  //? Inactive/Disabled tasks count.
+  //? Inactive/Disabled timers count.
   coreWatch.countInactive = async () => (await coreWatch.count()) - (await coreWatch.countActive())
 
-  //? Total tasks stats.
+  //? Total timers stats.
   coreWatch.stats = async () => {
-    let tasks = []
+    let timers = []
 
-    for (const task in tasksList) {
-      tasks.push({
-        name: task,
-        active: await tasksList[task].isActive(),
-        interval: await tasksList[task].getInterval()
+    for (const timer in timerList) {
+      timers.push({
+        name: timer,
+        active: await timerList[timer].isActive(),
+        interval: await timerList[timer].getInterval()
       })
     }
 
     return {
-      disabledTasksCount: await coreWatch.countInactive(),
-      activeTasksCount: await coreWatch.countActive(),
-      totalTasksCount: await coreWatch.count(),
-      tasks: tasks
+      disabledTimersCount: await coreWatch.countInactive(),
+      activeTimersCount: await coreWatch.countActive(),
+      totalTimersCount: await coreWatch.count(),
+      timers: timers
     }
   }
 
-  //? Changes Interval for a task.
+  //? Changes Interval for a timer.
   coreWatch.changeInterval = async (key, interval) => {
     try {
-      let task = await coreWatch.get(key)
-      await task.setInterval(interval)
+      let timer = await coreWatch.get(key)
+      await timer.setInterval(interval)
       if (!withoutEvents) {
         coreWatch.emit('intervalChange', { key, interval })
       }

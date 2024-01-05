@@ -1,6 +1,6 @@
 {
   "name": "v_core_timers",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Simple to use Timers with Events for node and web.",
   "main": "./dist/v_core_timers.cjs.js",
   "module": "./dist/v_core_timers.es.js",
@@ -11,9 +11,9 @@
     "test:watch": "jest --runInBand --watch",
     "build": "rollup -c ./rollup.config.js --bundleConfigAsCjs",
     "build:prod": "rollup -c ./rollup.config.js --bundleConfigAsCjs --environment NODE_ENV:production",
-    "prepack": "npm run lint && npm run export:types && npm run build:prod && npm run test",
     "lint:fix": "eslint source --fix",
-    "lint": "eslint source"
+    "lint": "eslint source",
+    "prepare": "npm run lint && npm run export:types && npm run build:prod && npm run test"
   },
   "repository": {
     "type": "git",
