@@ -9,9 +9,9 @@ __tests__
 
 package-lock.json
 
+.eslintrc.json
 jest.config.js
 jest.config.mjs
-
 rollup.config.json
 rollup.config.js
 

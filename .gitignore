@@ -111,3 +111,5 @@ _OLD_
 types
 types/
 types/**
+
+package-lock.json
