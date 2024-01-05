@@ -1,6 +1,6 @@
 {
   "name": "v_core_timers",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Simple to use Timers with Events for node and web.",
   "main": "./dist/v_core_timers.cjs.js",
   "module": "./dist/v_core_timers.es.js",
