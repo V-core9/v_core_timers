@@ -1,28 +1,32 @@
 import { EventEmitter } from 'events'
+import { isAsyncFunction } from './utils'
 
 /**
  * Creates a Core Timer object.
  *
- * @param {Object} props - The properties for the Core Timer.
- * @param {Function} props.cb - The callback function to be executed by the Core Timer.
- * @param {boolean} [props.autoStart=true] - Indicates whether the Core Timer should automatically start.
- * @param {number} [props.interval=100] - The interval in milliseconds between each execution of the callback function.
- * @param {boolean} [props.withoutEvents=false] - Indicates whether the Core Timer should emit events.
+ * @param {Object} coreTimerProps - The properties for the Core Timer.
+ * @param {Function} coreTimerProps.cb - The callback function to be executed by the Core Timer.
+ * @param {boolean} [coreTimerProps.autoStart=true] - Indicates whether the Core Timer should automatically start.
+ * @param {number} [coreTimerProps.interval=100] - The interval in milliseconds between each execution of the callback function.
+ * @param {boolean} [coreTimerProps.withoutEvents=false] - Indicates whether the Core Timer should emit events.
  * @returns {Object} - The Core Timer object.
  * @throws {Error} - Throws an error if the callback function is missing.
  */
-function V_Core_Timer(props = {}) {
-  if (typeof props.cb !== 'function') {
+export default function V_Core_Timer(coreTimerProps = {}) {
+  if (typeof coreTimerProps.cb !== 'function') {
     throw new Error('Core Timer is Missing a Callback Function')
   }
 
-  const withoutEvents = props?.withoutEvents ? true : false
+  const withoutEvents = coreTimerProps?.withoutEvents ? true : false
   let loop = null
-  let autoStart = typeof props.autoStart === 'boolean' ? props.autoStart : true
-  let interval = !isNaN(props.interval) && props.interval > 0 ? props.interval : 100
-  let cb = props.cb
+  let autoStart = typeof coreTimerProps.autoStart === 'boolean' ? coreTimerProps.autoStart : true
+  let interval = !isNaN(coreTimerProps.interval) && coreTimerProps.interval > 0 ? coreTimerProps.interval : 100
+  let cb = coreTimerProps.cb
+  let isRunning = false
 
   const coreTimer = !withoutEvents ? new EventEmitter() : {}
+  const emitEvent = (event, data = null, emitter = !withoutEvents ? coreTimer : null) =>
+    !withoutEvents && emitter !== null ? emitter.emit(event, data) : null
 
   //* Begin/Start It
   coreTimer.begin = async () => {
@@ -33,17 +37,19 @@ function V_Core_Timer(props = {}) {
       }, interval)
       result = true
     }
-    if (!withoutEvents) coreTimer.emit('start', result)
+    emitEvent('start', result)
     return result
   }
 
   //* End/Stop it
   coreTimer.end = async () => {
     if (loop === null) return false
+
     clearInterval(loop)
     loop = null
+
     let result = loop === null
-    if (!withoutEvents) coreTimer.emit('end', result)
+    emitEvent('end', result)
     return result
   }
 
@@ -57,8 +63,8 @@ function V_Core_Timer(props = {}) {
     interval = val
 
     if (await coreTimer.status()) {
-      coreTimer.end()
-      coreTimer.begin()
+      await coreTimer.end()
+      await coreTimer.begin()
     }
 
     return true
@@ -70,8 +76,19 @@ function V_Core_Timer(props = {}) {
 
   coreTimer.run = async () => {
     try {
-      cb()
-      if (!withoutEvents) coreTimer.emit('run')
+      if (isRunning) {
+        console.log('Already Running the CB FN')
+        return
+      }
+
+      isRunning = true
+      if (isAsyncFunction(cb)) {
+        await cb()
+      } else {
+        cb()
+      }
+      emitEvent('run')
+      isRunning = false
       return true
     } catch (error) {
       console.log(error)
@@ -96,6 +113,4 @@ function V_Core_Timer(props = {}) {
 
   return coreTimer
 }
-
-export default V_Core_Timer
 
