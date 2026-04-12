@@ -18,6 +18,7 @@ export default function V_Core_Timer(coreTimerProps = {}) {
   }
 
   const withoutEvents = coreTimerProps?.withoutEvents ? true : false
+  const parallelCalls = Boolean(coreTimerProps?.parallelCalls || true)
   let loop = null
   let autoStart = typeof coreTimerProps.autoStart === 'boolean' ? coreTimerProps.autoStart : true
   let interval = !isNaN(coreTimerProps.interval) && coreTimerProps.interval > 0 ? coreTimerProps.interval : 100
@@ -29,20 +30,21 @@ export default function V_Core_Timer(coreTimerProps = {}) {
     !withoutEvents && emitter !== null ? emitter.emit(event, data) : null
 
   //* Begin/Start It
-  coreTimer.begin = async () => {
+  const begin = async () => {
     let result = false
+
+    if (loop !== null) await end()
+
     if (loop === null) {
-      loop = setInterval(async () => {
-        coreTimer.run()
-      }, interval)
+      loop = setInterval(run, interval)
       result = true
+      emitEvent('start', result)
     }
-    emitEvent('start', result)
     return result
   }
 
   //* End/Stop it
-  coreTimer.end = async () => {
+  const end = async () => {
     if (loop === null) return false
 
     clearInterval(loop)
@@ -54,32 +56,30 @@ export default function V_Core_Timer(coreTimerProps = {}) {
   }
 
   //* Is Running Status Check
-  coreTimer.status = async () => loop !== null
+  const status = async () => loop !== null
 
   //* Change Interval
-  coreTimer.setInterval = async (val = null) => {
+  const setInterval = async (val = null) => {
     if (isNaN(val) || val <= 0 || val === null) return false
 
     interval = val
 
-    if (await coreTimer.status()) {
-      await coreTimer.end()
-      await coreTimer.begin()
-    }
+    if (await status()) await begin()
 
     return true
   }
 
   //? HELPERS:
   //* Getting Interval
-  coreTimer.getInterval = async () => interval
+  const getInterval = async () => interval
 
-  coreTimer.run = async () => {
+  const run = async () => {
     try {
-      if (isRunning) {
-        console.log('Already Running the CB FN')
-        return
-      }
+      if (!parallelCalls && isRunning) return false
+      // {
+      //   console.log('Already Running the CB FN')
+      //   return
+      // }
 
       isRunning = true
       if (isAsyncFunction(cb)) {
@@ -87,6 +87,7 @@ export default function V_Core_Timer(coreTimerProps = {}) {
       } else {
         cb()
       }
+
       emitEvent('run')
       isRunning = false
       return true
@@ -98,15 +99,29 @@ export default function V_Core_Timer(coreTimerProps = {}) {
 
   //? ALIASES:
   //* coreTimer.end()
-  coreTimer.stop = async () => await coreTimer.end()
+  coreTimer.end = end
+  coreTimer.stop = end
+
   //* coreTimer.begin()
-  coreTimer.start = async () => await coreTimer.begin()
+  coreTimer.begin = begin
+  coreTimer.start = begin
+
   //* coreTimer.status()
-  coreTimer.isActive = async () => await coreTimer.status()
+  coreTimer.status = status
+  coreTimer.isActive = status
+
+  //* getInterval
+  coreTimer.getInterval = getInterval
+
   //* coreTimer.setInterval()
-  coreTimer.changeInterval = async (val) => await coreTimer.setInterval(val)
+  coreTimer.setInterval = setInterval
+  coreTimer.changeInterval = setInterval
+
   //* coreTimer.run()
-  coreTimer.execute = async () => await coreTimer.run()
+  coreTimer.run = run
+  coreTimer.execute = run
+
+  coreTimer.status = status
 
   //! AutoStart if not disabled
   if (autoStart) coreTimer.start()

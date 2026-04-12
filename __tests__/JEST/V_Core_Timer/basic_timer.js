@@ -1,13 +1,15 @@
 const { hof_v_core_timer } = require('../../..')
 const delayedAction = require('../../helpers/delayedAction')
 
+const interval = 1
+
 test('basic counter test', async () => {
   let counter = 0
   let beginCount = 0
   let runCount = 0
   let endCount = 0
 
-  const basic_timer = hof_v_core_timer({ cb: () => counter++, interval: 100, autoStart: false })
+  const basic_timer = hof_v_core_timer({ cb: () => counter++, interval, autoStart: false })
 
   basic_timer.on('begin', async () => beginCount++)
   basic_timer.on('run', async () => runCount++)
@@ -15,7 +17,7 @@ test('basic counter test', async () => {
 
   expect(await basic_timer.begin()).toBe(true)
 
-  expect(await basic_timer.getInterval()).toBe(100)
+  expect(await basic_timer.getInterval()).toBe(interval)
 
   expect(counter).toBe(0)
 
